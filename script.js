@@ -1,11 +1,11 @@
 let inputRecorder = "";
 let question = [];
-let result_screen = null;
-let input_screen = null;
+let resultScreen = null;
+let inputScreen = null;
 
 document.addEventListener("DOMContentLoaded", function(ev) {
-    result_screen = document.getElementById("result-screen");
-    input_screen = document.getElementById("input-screen");
+    resultScreen = document.getElementById("result-screen");
+    inputScreen = document.getElementById("input-screen");
 
     forEach(document.querySelectorAll(".calc-buttons button"), function(element){
         if(element.id.search("sym_equal") < 0 && element.id.search("action") < 0){
@@ -15,48 +15,34 @@ document.addEventListener("DOMContentLoaded", function(ev) {
 
     document.getElementById("sym_equal").addEventListener("click", equalButtonAction);
     document.getElementById("action_clear").addEventListener("click", resetButtonAction);
-    document.getElementById("action_del").addEventListener("click", resetButtonAction);
+    document.getElementById("action_del").addEventListener("click", deleteInputAction);
 
     console.log("done")
 });
 
-const evaluateButtonAction = function({target}) {
-    // debugger;
-    const input = target.id;
-
-    // If a symbol was pressed...
-    if(input.search("sym") > -1){
-        question.push(inputRecorder, input);
-        inputRecorder = "";
-        inputRecorder = solve();
-
-    }else{
-        inputRecorder += input;
+const forEach = function(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+        (callback)(array[index]);
     }
-
-    displayInput(input);
 };
 
 const displayInput = function(input) {
     const values = {
         "sym_add": "+",
         "sym_sub": "-",
-        "sym_mul": "*"
+        "sym_mul": "*",
+        "sym_div": "/"
     };
 
     if(input.search("sym") > -1){
-        input_screen.textContent += ` ${values[input]} `;
+        inputScreen.textContent += ` ${values[input]} `;
     }else{
-        input_screen.textContent += `${input}`;
+        inputScreen.textContent += `${input}`;
     }
 };
 
-const equalButtonAction = function() {
-    inputRecorder = solve();
-};
-
 const solve = function() {
-    // debugger;
+    debugger;
     let result = "";
     const operation = {
         "sym_add": function(a, b) {
@@ -67,6 +53,9 @@ const solve = function() {
         },
         "sym_mul": function(a, b) {
             return a * b;
+        },
+        "sym_div": function(a, b) {
+            return a / b;
         }
     };
 
@@ -74,27 +63,50 @@ const solve = function() {
         question.push(inputRecorder);
     }
 
-    if (question.length == 3) {
-        let left_operand = parseFloat(question[0]);
+    if (question.length >= 3) {
+        let leftOperand = parseFloat(question[0]);
         let operator = question[1];
-        let right_operand = parseFloat(question[2]);
+        let rightOperand = parseFloat(question[2]);
 
-        result = operation[operator](left_operand, right_operand);
+        result = `${operation[operator](leftOperand, rightOperand)}`;
         console.log(result);
 
-        question = [result];
+        question = [result].concat(question.slice(3));
     }
 
-    result_screen.textContent = `${result}`;
-    return `${result}`;
+    resultScreen.textContent = result;
+    return result;
+};
+
+const evaluateButtonAction = function({target}) {
+    // debugger;
+    const input = target.id;
+
+    // If a symbol was pressed...
+    if(input.search("sym") > -1){
+        question.push(inputRecorder, input);
+        inputRecorder = "";
+        solve();
+
+    }else{
+        inputRecorder += input;
+    }
+
+    displayInput(input);
+};
+
+const equalButtonAction = function(ev) {
+    inputRecorder = solve();
 };
 
 const resetButtonAction = function(ev) {
-    alert("resetting...")
+    inputRecorder = "";
+    question = [];
+
+    inputScreen.textContent = "";
+    resultScreen.textContent = "";
 };
- 
-const forEach = function(array, callback) {
-    for (let index = 0; index < array.length; index++) {
-        (callback)(array[index]);
-    }
+
+const deleteInputAction = function(ev) {
+    alert("deleting...");
 };

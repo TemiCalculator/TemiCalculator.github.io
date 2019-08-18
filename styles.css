@@ -24,6 +24,7 @@
 }
 
 .calc-screen *{
+    font-size: 1.5rem;
     color: white;
     text-align: right;
     width: 100%;
@@ -74,7 +75,7 @@
 
 .calc-buttons div:first-child button{
     width: auto;
-    border: none;
+    border: 1px solid rgb(161, 23, 23);
     background-color: rgb(199, 31, 31);
     color: white;
     padding: 0 1rem;
@@ -90,6 +91,7 @@
 }
 
 .calc-buttons div:last-child button:last-child{
+    border: 1px solid rgb(138, 87, 28);
     background-color: rgb(219, 137, 42);
     color: white;
     border: none;
